@@ -1,4 +1,4 @@
-const {S3Client,GetObjectCommand } = require ("@aws-sdk/client-s3");
+const {S3Client,GetObjectCommand, PutObjectCommand } = require ("@aws-sdk/client-s3");
 const { getSignedUrl } = require ("@aws-sdk/s3-request-presigner");
 require('dotenv').config()
 
@@ -15,12 +15,22 @@ async function getObjectURL(key) {
         Bucket: "yashfirsttestbucket",
         Key: key
     });
-    const url = await  getSignedUrl(s3client, command,{expiresIn:20});
+    const url = await  getSignedUrl(s3client, command);
     return url;
 }
-  
+
+async function putObject(filename,contentType) {
+    const command = new PutObjectCommand({
+        Bucket: "yashfirsttestbucket",
+        Key: `uploads/user/${filename}`,
+        ContentType: contentType
+    });
+    const url = await getSignedUrl(s3client, command);
+    return url; 
+}
 async function main() {
-    console.log(await getObjectURL("website-blog.jpg"))
+    /* console.log(await getObjectURL("website-blog.jpg")) */
+    console.log(await putObject('image-1.jpeg','image/jpeg'))
 }
 
 main()
